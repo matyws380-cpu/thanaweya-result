@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نتيجة الثانوية العامة 2026</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Tajawal', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('my-photo.jpg') no-repeat center center fixed;
+            background-size: cover;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 520px;
+            background: rgba(255, 255, 255, 0.93);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 28px;
+            padding: 40px 30px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1) inset;
+            animation: fadeUp 0.6s ease;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo { text-align: center; margin-bottom: 28px; }
+        .logo .icon { font-size: 48px; display: block; margin-bottom: 6px; }
+        .logo h1 { font-size: 28px; font-weight: 900; color: #1a1a2e; letter-spacing: -0.5px; }
+        .logo h1 span { color: #c0392b; }
+        .logo p { color: #555; font-size: 15px; margin-top: 4px; font-weight: 500; }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label {
+            display: block; font-weight: 700; color: #1a1a2e;
+            margin-bottom: 6px; font-size: 15px;
+        }
+        .input-group input, .input-group select {
+            width: 100%; padding: 14px 18px;
+            border: 2px solid #e0e0e0; border-radius: 14px;
+            font-size: 16px; font-family: 'Tajawal', sans-serif;
+            transition: all 0.25s; background: #fff; outline: none;
+        }
+        .input-group input:focus, .input-group select:focus {
+            border-color: #c0392b; box-shadow: 0 0 0 4px rgba(192,57,43,0.15);
+        }
+
+        .btn-search {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            color: #fff; border: none; border-radius: 14px;
+            font-size: 18px; font-weight: 800; font-family: 'Tajawal', sans-serif;
+            cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 8px 24px rgba(192,57,43,0.35);
+        }
+        .btn-search:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(192,57,43,0.45); }
+        .btn-search:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .loading { display: none; text-align: center; padding: 24px 0 8px; }
+        .loading.active { display: block; }
+        .spinner {
+            width: 48px; height: 48px;
+            border: 5px solid #f3f3f3; border-top: 5px solid #c0392b;
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .result-box { display: none; margin-top: 24px; padding: 24px; background: linear-gradient(135deg,#f8f9fa,#fff); border-radius: 18px; border: 2px solid #e8e8e8; animation: fadeUp 0.4s ease; }
+        .result-box.active { display: block; }
+        .result-header { text-align: center; padding-bottom: 16px; border-bottom: 2px dashed #ddd; margin-bottom: 16px; }
+        .result-header .badge { display: inline-block; background: #27ae60; color: #fff; padding: 6px 18px; border-radius: 50px; font-size: 13px; font-weight: 700; }
+        .result-header h2 { margin-top: 10px; font-size: 22px; color: #1a1a2e; }
+        .result-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .result-item { background: #fff; padding: 12px 14px; border-radius: 12px; border: 1px solid #eee; }
+        .result-item .label { font-size: 12px; color: #888; font-weight: 600; }
+        .result-item .value { font-size: 18px; font-weight: 800; color: #1a1a2e; margin-top: 2px; }
+        .result-item.full-width { grid-column: 1 / -1; }
+
+        .subjects-box { display: none; margin-top: 16px; }
+        .subjects-box.active { display: block; }
+        .subjects-box h3 { font-size: 16px; color: #1a1a2e; margin-bottom: 10px; text-align: center; }
+        .subjects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .subject-item {
+            background: #fff; padding: 10px 12px; border-radius: 10px;
+            border: 1px solid #eee; display: flex; justify-content: space-between;
+        }
+        .subject-item .s-name { font-weight: 600; color: #333; font-size: 14px; }
+        .subject-item .s-grade { font-weight: 800; color: #c0392b; font-size: 14px; }
+
+        .error-msg { display: none; margin-top: 16px; padding: 14px 18px; background: #fff0ee; border: 1px solid #f5c6cb; border-radius: 12px; color: #b71c1c; font-weight: 600; text-align: center; }
+        .error-msg.active { display: block; }
+
+        .official-link { margin-top: 20px; text-align: center; padding-top: 18px; border-top: 1px solid #eee; }
+        .official-link a { color: #c0392b; font-weight: 700; text-decoration: none; font-size: 14px; }
+        .official-link a:hover { color: #e74c3c; text-decoration: underline; }
+        .footer { text-align: center; margin-top: 22px; font-size: 12px; color: #999; }
+
+        @media (max-width:480px) {
+            .container { padding: 28px 18px; }
+            .logo h1 { font-size: 22px; }
+            .result-details, .subjects-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <span class="icon">🎓</span>
+            <h1>ن<span>تيج</span>تي</h1>
+            <p>استعلام نتيجة الثانوية العامة 2026</p>
+        </div>
+
+        <div class="input-group">
+            <label for="seatNo">📋 رقم الجلوس</label>
+            <input type="text" id="seatNo" placeholder="أدخل رقم الجلوس (مثال: 123456)" maxlength="15" inputmode="numeric">
+        </div>
+
+        <div class="input-group">
+            <label for="track">📚 الشعبة</label>
+            <select id="track">
+                <option value="علمي علوم">علمي علوم</option>
+                <option value="علمي رياضة">علمي رياضة</option>
+                <option value="أدبي">أدبي</option>
+            </select>
+        </div>
+
+        <button class="btn-search" id="searchBtn">🔍 استعلام عن النتيجة</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>جاري جلب النتيجة من وزارة التربية والتعليم...</p>
+        </div>
+
+        <div class="error-msg" id="errorMsg"></div>
+
+        <div class="result-box" id="resultBox">
+            <div class="result-header">
+                <span class="badge" id="statusBadge">✅ تم العثور على النتيجة</span>
+                <h2 id="studentName">—</h2>
+            </div>
+            <div class="result-details">
+                <div class="result-item">
+                    <div class="label">رقم الجلوس</div>
+                    <div class="value" id="rSeatNo">—</div>
+                </div>
+                <div class="result-item">
+                    <div class="label">المدرسة</div>
+                    <div class="value" id="rSchool">—</div>
+                </div>
+                <div class="result-item">
+                    <div class="label">المجموع الكلي</div>
+                    <div class="value" id="rTotal">—</div>
+                </div>
+                <div class="result-item">
+                    <div class="label">النسبة المئوية</div>
+                    <div class="value" id="rPercent">—</div>
+                </div>
+                <div class="result-item">
+                    <div class="label">الشعبة</div>
+                    <div class="value" id="rTrack">—</div>
+                </div>
+                <div class="result-item">
+                    <div class="label">الحالة</div>
+                    <div class="value" id="rStatus">—</div>
+                </div>
+            </div>
+
+            <div class="subjects-box" id="subjectsBox">
+                <h3>📊 درجات المواد</h3>
+                <div class="subjects-grid" id="subjectsGrid"></div>
+            </div>
+        </div>
+
+        <div class="official-link">
+            🔗 <a href="https://g12.emis.gov.eg" target="_blank" rel="noopener">الموقع الرسمي لوزارة التربية والتعليم</a>
+        </div>
+        <div class="footer">
+            جميع البيانات مستوفاة من البوابة الرسمية لوزارة التربية والتعليم © 2026
+        </div>
+    </div>
+
+    <script>
+        const searchBtn   = document.getElementById('searchBtn');
+        const seatNoInput = document.getElementById('seatNo');
+        const trackSelect = document.getElementById('track');
+        const loading     = document.getElementById('loading');
+        const errorMsg    = document.getElementById('errorMsg');
+        const resultBox   = document.getElementById('resultBox');
+        const subjectsBox = document.getElementById('subjectsBox');
+        const subjectsGrid= document.getElementById('subjectsGrid');
+        const rSeatNo     = document.getElementById('rSeatNo');
+        const rName       = document.getElementById('studentName');
+        const rSchool     = document.getElementById('rSchool');
+        const rTotal      = document.getElementById('rTotal');
+        const rPercent    = document.getElementById('rPercent');
+        const rTrack      = document.getElementById('rTrack');
+        const rStatus     = document.getElementById('rStatus');
+        const statusBadge = document.getElementById('statusBadge');
+
+        // ─── الرابط بتاع الـ API بتاعك على Vercel ───
+        // ⚠️ غير الرابط ده بعد ما تنشر على Vercel
+        const API_URL = '/api/result';
+
+        function resetUI() {
+            resultBox.classList.remove('active');
+            subjectsBox.classList.remove('active');
+            errorMsg.classList.remove('active');
+            loading.classList.remove('active');
+        }
+
+        function showError(msg) {
+            errorMsg.textContent = '❌ ' + msg;
+            errorMsg.classList.add('active');
+        }
+
+        function displayResult(data) {
+            rSeatNo.textContent   = data.seatNo || '—';
+            rName.textContent     = data.name || '—';
+            rSchool.textContent   = data.school || '—';
+            rTotal.textContent    = data.total || '—';
+            rPercent.textContent  = data.percent || '—';
+            rTrack.textContent    = data.track || '—';
+            rStatus.textContent   = data.status || '—';
+
+            if (data.status && data.status.includes('ناجح')) {
+                statusBadge.textContent = '🎉 ناجح';
+                statusBadge.style.background = '#27ae60';
+            } else if (data.status && data.status.includes('دور ثان')) {
+                statusBadge.textContent = '📝 دور ثان';
+                statusBadge.style.background = '#f39c12';
+            } else if (data.status && (data.status.includes('راسب') || data.status.includes('ضعيف'))) {
+                statusBadge.textContent = '❌ للأسف';
+                statusBadge.style.background = '#c0392b';
+            } else {
+                statusBadge.textContent = '✅ تم الاستعلام';
+                statusBadge.style.background = '#27ae60';
+            }
+
+            // عرض المواد لو موجودة
+            if (data.subjects && data.subjects.length > 0) {
+                subjectsGrid.innerHTML = '';
+                data.subjects.forEach(sub => {
+                    const div = document.createElement('div');
+                    div.className = 'subject-item';
+                    div.innerHTML = `
+                        <span class="s-name">${sub.name}</span>
+                        <span class="s-grade">${sub.grade}</span>
+                    `;
+                    subjectsGrid.appendChild(div);
+                });
+                subjectsBox.classList.add('active');
+            }
+
+            resultBox.classList.add('active');
+        }
+
+        searchBtn.addEventListener('click', async () => {
+            const seatNo = seatNoInput.value.trim();
+            if (!seatNo) {
+                showError('من فضلك أدخل رقم الجلوس');
+                return;
+            }
+            if (seatNo.length < 6) {
+                showError('رقم الجلوس غير صحيح — يجب أن يكون 6 أرقام على الأقل');
+                return;
+            }
+
+            const track = trackSelect.value;
+            resetUI();
+
+            loading.classList.add('active');
+            searchBtn.disabled = true;
+            searchBtn.textContent = '⏳ جاري البحث...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ seatNo, track })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || data.error) {
+                    throw new Error(data.error || 'فشل الاتصال بخادم الوزارة');
+                }
+
+                if (!data.found) {
+                    showError(data.message || 'لم يتم العثور على نتيجة بهذا الرقم');
+                    return;
+                }
+
+                displayResult(data);
+            } catch (err) {
+                showError(err.message + '. جرب الموقع الرسمي للوزارة.');
+            } finally {
+                loading.classList.remove('active');
+                searchBtn.disabled = false;
+                searchBtn.textContent = '🔍 استعلام عن النتيجة';
+            }
+        });
+
+        seatNoInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') searchBtn.click();
+        });
+    </script>
+</body>
+</html>
